@@ -1,39 +1,57 @@
 'use strict';
 
-const { ifElse } = require('./ifElse'); // uncomment when running
+const { ifElse } = require('./ifElse');
 
 describe('ifElse', () => {
-  it('calls first callback if condition returns true', () => {
+  it('should call first callback when condition returns true', () => {
     const condition = jest.fn(() => true);
     const first = jest.fn();
     const second = jest.fn();
 
     ifElse(condition, first, second);
 
-    expect(condition).toHaveBeenCalled();
-    expect(first).toHaveBeenCalled();
+    expect(condition).toHaveBeenCalledTimes(1);
+    expect(first).toHaveBeenCalledTimes(1);
     expect(second).not.toHaveBeenCalled();
   });
 
-  it('calls second callback if condition returns false', () => {
+  it('should call second callback when condition returns false', () => {
     const condition = jest.fn(() => false);
     const first = jest.fn();
     const second = jest.fn();
 
     ifElse(condition, first, second);
 
-    expect(condition).toHaveBeenCalled();
-    expect(second).toHaveBeenCalled();
+    expect(condition).toHaveBeenCalledTimes(1);
+    expect(second).toHaveBeenCalledTimes(1);
     expect(first).not.toHaveBeenCalled();
   });
 
-  it('does not return any value', () => {
+  it('should call condition callback without arguments', () => {
     const condition = jest.fn(() => true);
     const first = jest.fn();
     const second = jest.fn();
 
-    const result = ifElse(condition, first, second);
+    ifElse(condition, first, second);
 
-    expect(result).toBeUndefined();
+    expect(condition).toHaveBeenCalledWith();
+  });
+
+  it('should call first or second callback without arguments', () => {
+    const conditionTrue = jest.fn(() => true);
+    const conditionFalse = jest.fn(() => false);
+    const first = jest.fn();
+    const second = jest.fn();
+
+    ifElse(conditionTrue, first, second);
+    expect(first).toHaveBeenCalledWith();
+    expect(second).not.toHaveBeenCalled();
+
+    first.mockClear();
+    second.mockClear();
+
+    ifElse(conditionFalse, first, second);
+    expect(second).toHaveBeenCalledWith();
+    expect(first).not.toHaveBeenCalled();
   });
 });
